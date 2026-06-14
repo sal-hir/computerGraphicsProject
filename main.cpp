@@ -1,6 +1,8 @@
 #include <GL/glut.h>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
+#include <algorithm>
 #include "globals.h"
 #include "algorithms.h"
 #include "levels.h"
@@ -13,11 +15,12 @@ float cameraY = 0, pX = 0, pY = 0, pVy = 0, gravity = 0.4, jumpStrength = 12.0;
 bool moveLeft = false, moveRight = false;
 
 std::vector<Platform> platforms; std::vector<Obstacle> obstacles;
+std::vector<Planet> planets;  //level 1 planets
 
 void initLevel(int level) {
     gameState = level; subState = 0; stateTimer = 60; // 1-second intro
     pX = 0; pY = -200; pVy = 12; cameraY = -300; score = 0; jumpCount = 0;
-    platforms.clear(); obstacles.clear(); //clear out arrays
+    platforms.clear(); obstacles.clear(); planets.clear(); //clear out arrays
     if(level==1)
         resetLevel1();
     else if(level==2)
@@ -46,6 +49,38 @@ void handlePhysicsAndCamera() {
             plat.bounces++;
             jumpCount++;
         }
+    }
+
+     // Planet collision - Level 1 only
+    if (gameState == 1) {
+        for (auto& planet : planets) {
+            if (!planet.collected) {
+                float dx = pX - planet.x;
+                float dy = pY - planet.y;
+                float dist = sqrt(dx*dx + dy*dy);
+                if (dist < planet.radius + 10) {
+                    planet.collected = true;
+                    score += 50;
+                }
+            }
+        }
+
+        // Spawn new planets
+        if (rand() % 100 < 5) {
+            Planet p;
+            p.x = (float)(rand() % 400 - 200);
+            p.y = platforms.back().y + rand() % 100;
+            p.radius = 15.0f;
+            p.collected = false;
+            planets.push_back(p);
+        }
+
+        // Clean old planets
+        planets.erase(
+            std::remove_if(planets.begin(), planets.end(),
+                [&](const Planet& p) { return p.y < cameraY - 350; }),
+            planets.end()
+        );
     }
 
     if (pY > cameraY + 100)
@@ -112,9 +147,32 @@ void display() {
     else {
         glPushMatrix(); glTranslatef(0, -cameraY, 0);
         if (gameState == 1) drawLevel1(); else if (gameState == 2) drawLevel2(); else if (gameState == 3) drawLevel3(); else if (gameState == 4) drawLevel4();
+
+         // Draw planets - Level 1 only
+        if (gameState == 1) {
+            for (auto& planet : planets) {
+                if (!planet.collected) {
+                    glColor3f(0.8, 0.3, 0.1); // Red outer
+                    for(int a = 0; a < 360; a++) {
+                        float rad = a * 3.14159f / 180;
+                        drawPixel(planet.x + cos(rad) * planet.radius,
+                                 planet.y + sin(rad) * planet.radius);
+                    }
+                    glColor3f(0.5, 0.7, 1.0); // Blue inner
+                    for(int a = 0; a < 360; a++) {
+                        float rad = a * 3.14159f / 180;
+                        drawPixel(planet.x + cos(rad) * (planet.radius - 5),
+                                 planet.y + sin(rad) * (planet.radius - 5));
+                    }
+                }
+            }
+        }
+
         drawPlayer(gameState);
         glPopMatrix();
         glColor3f(1, 1, 1); drawText(-230, 270, "Score: " + std::to_string(score) + " | Jumps: " + std::to_string(jumpCount), GLUT_BITMAP_9_BY_15);
+        if (gameState == 1)
+            drawText(-230, 250, "Collect planets: +50!", GLUT_BITMAP_8_BY_13);
     }
     glutSwapBuffers();
 }

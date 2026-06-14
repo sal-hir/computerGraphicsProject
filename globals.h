@@ -15,8 +15,10 @@ extern bool moveLeft, moveRight;
 
 struct Platform { float x, y, w, vx; int bounces; };
 struct Obstacle { float x, y, w, angle; };
+struct Planet { float x, y, radius; bool collected; }; //level 1
 
 extern std::vector<Platform> platforms;
 extern std::vector<Obstacle> obstacles;
+extern std::vector<Planet> planets; //level 1
 
 #endif
