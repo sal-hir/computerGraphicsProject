@@ -252,7 +252,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv); //initilise GLUT library
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
     glutInitWindowSize(500, 600); //window size
-    glutCreateWindow(" •• Pixel Leap •• ");
+    glutCreateWindow("Pixel Leap");
     glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(-250, 250, -300, 300); //coordinate plane
