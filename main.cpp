@@ -5,22 +5,34 @@
 #include "algorithms.h"
 #include "levels.h"
 
+//gamestate (0 menu, 1-4 levels) substate (0 intro, 1 playing, 2 game over)
 int gameState = 0, subState = 0, stateTimer = 0, score = 0, jumpCount = 0;
+//camera position, player positions, player velocity, gravity(how quickly come down), jump_strength(how high)
 float cameraY = 0, pX = 0, pY = 0, pVy = 0, gravity = 0.4, jumpStrength = 12.0;
+//left right movements
 bool moveLeft = false, moveRight = false;
+
 std::vector<Platform> platforms; std::vector<Obstacle> obstacles;
 
 void initLevel(int level) {
     gameState = level; subState = 0; stateTimer = 60; // 1-second intro
     pX = 0; pY = -200; pVy = 12; cameraY = -300; score = 0; jumpCount = 0;
-    platforms.clear(); obstacles.clear();
-    if(level==1) resetLevel1(); else if(level==2) resetLevel2(); else if(level==3) resetLevel3(); else if(level==4) resetLevel4();
+    platforms.clear(); obstacles.clear(); //clear out arrays
+    if(level==1)
+        resetLevel1();
+    else if(level==2)
+        resetLevel2();
+    else if(level==3)
+        resetLevel3();
+    else if(level==4)
+        resetLevel4();
 }
 
 void handlePhysicsAndCamera() {
-    pVy -= gravity;
-    pY += pVy;
+    pVy -= gravity; //track velocity
+    pY += pVy; //update base on velocity
 
+    //left right movements
     if (moveLeft) pX -= 5;
     if (moveRight) pX += 5;
 
@@ -52,11 +64,44 @@ void handlePhysicsAndCamera() {
     if (pY < cameraY - 300) { subState = 2; stateTimer = 0; } // Trigger Game Over Intro
 }
 
-void drawPlayer() {
+void drawPlayer(int level) {
+
+    if(level == 1){
+
     glColor3f(1, 1, 1); glPushMatrix(); glTranslatef(pX, pY, 0);
     drawLineDDA(-10, -10, 10, -10); drawLineDDA(10, -10, 10, 10);
     drawLineDDA(10, 10, -10, 10); drawLineDDA(-10, 10, -10, -10);
     glPopMatrix();
+
+    }
+
+      if(level == 2){
+
+    glColor3f(0.4, 0.7, 1); glPushMatrix(); glTranslatef(pX, pY, 0);
+    drawLineDDA(-10, -10, 10, -10); drawLineDDA(10, -10, 10, 10);
+    drawLineDDA(10, 10, -10, 10); drawLineDDA(-10, 10, -10, -10);
+    glPopMatrix();
+
+    }
+
+      if(level == 3){
+
+    glColor3f(1, 0, 0.8); glPushMatrix(); glTranslatef(pX, pY, 0);
+    drawLineDDA(-10, -10, 10, -10); drawLineDDA(10, -10, 10, 10);
+    drawLineDDA(10, 10, -10, 10); drawLineDDA(-10, 10, -10, -10);
+    glPopMatrix();
+
+    }
+
+      if(level == 4){
+
+    glColor3f(0.3, 0.7, 0); glPushMatrix(); glTranslatef(pX, pY, 0);
+    drawLineDDA(-10, -10, 10, -10); drawLineDDA(10, -10, 10, 10);
+    drawLineDDA(10, 10, -10, 10); drawLineDDA(-10, 10, -10, -10);
+    glPopMatrix();
+
+    }
+
 }
 
 void display() {
@@ -67,7 +112,7 @@ void display() {
     else {
         glPushMatrix(); glTranslatef(0, -cameraY, 0);
         if (gameState == 1) drawLevel1(); else if (gameState == 2) drawLevel2(); else if (gameState == 3) drawLevel3(); else if (gameState == 4) drawLevel4();
-        drawPlayer();
+        drawPlayer(gameState);
         glPopMatrix();
         glColor3f(1, 1, 1); drawText(-230, 270, "Score: " + std::to_string(score) + " | Jumps: " + std::to_string(jumpCount), GLUT_BITMAP_9_BY_15);
     }
@@ -86,12 +131,19 @@ void update(int value) {
     glutPostRedisplay(); glutTimerFunc(16, update, 0);
 }
 
+//level selection and reset
 void keyboard(unsigned char key, int x, int y) {
     if (gameState == 0 && key >= '1' && key <= '4') initLevel(key - '0');
     if (subState == 2 && (key == 'm' || key == 'M')) { gameState = 0; subState = 0; glClearColor(0,0,0,1); }
     if (key == 27) exit(0);
 }
-void specialDown(int key, int x, int y) { if (key == GLUT_KEY_LEFT) moveLeft = true; if (key == GLUT_KEY_RIGHT) moveRight = true; }
+void specialDown(int key, int x, int y)
+{
+    if (key == GLUT_KEY_LEFT)
+        moveLeft = true;
+    if (key == GLUT_KEY_RIGHT)
+        moveRight = true;
+}
 void specialUp(int key, int x, int y) { if (key == GLUT_KEY_LEFT) moveLeft = false; if (key == GLUT_KEY_RIGHT) moveRight = false; }
 
 int main(int argc, char** argv) {
