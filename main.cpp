@@ -127,7 +127,8 @@ void handlePhysicsAndCamera() {
     if (pY < cameraY - 300) { subState = 2; stateTimer = 0; } // Trigger Game Over Intro
 }
 
-void drawPlayer() {
+void drawPlayer(int level) {
+      if(level == 1 || level == 0){
     glColor3f(1, 1, 1);               // white color
     glPushMatrix();
     glTranslatef(pX, pY, 0);          // move to player position
@@ -136,8 +137,8 @@ void drawPlayer() {
     drawLineDDA(10, 10, -10, 10);     // top line
     drawLineDDA(-10, 10, -10, -10);   // left line
     glPopMatrix();
-
     }
+
 
       if(level == 2){
 
