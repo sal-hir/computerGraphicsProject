@@ -65,10 +65,16 @@ void handlePhysicsAndCamera() {
     for (auto& plat : platforms) {
             //platform width (width changes for level 3)
         float effWidth = (gameState == 2) ? plat.w * (1.0f - (plat.bounces * 0.33f)) : plat.w;
+
         // Collision Detection
-        if (pVy < 0 && pY - 15 <= plat.y && pY - 15 >= plat.y - 15 && pX >= plat.x - effWidth/2 && pX <= plat.x + effWidth/2) {
-            pVy = jumpStrength;
-            plat.bounces++;
+        if (pVy < 0 &&                                 // player is falling
+            plat.bounces < 3 &&                        // platform not vanished
+            pY - 15 <= plat.y &&                       // player bottom touches platform top
+            pY - 15 >= plat.y - 15 &&
+            pX >= plat.x - effWidth/2 &&
+            pX <= plat.x + effWidth/2) {               // player within platform width
+            pVy = jumpStrength;                        // bounce player up
+            plat.bounces++;                            // shrink platform
             jumpCount++;
         }
     }
@@ -113,7 +119,7 @@ void handlePhysicsAndCamera() {
 
     // Generator
     if (platforms.back().y < cameraY + 400) {
-        platforms.push_back({(float)(rand() % 400 - 200), platforms.back().y + (rand() % 40 + 50), (gameState==2)?100.0f:60.0f, (gameState==1)?(float)(rand()%5-2):0, 0});
+        platforms.push_back({(float)(rand() % 200 - 100), platforms.back().y + (rand() % 40 + 50), (gameState==2)?100.0f:60.0f, (gameState==1)?(float)(rand()%5-2):0, 0});
         if (gameState == 3 && rand() % 100 < 50) obstacles.push_back({platforms.back().x, platforms.back().y + 40, 60, 0});
     }
 
@@ -121,13 +127,14 @@ void handlePhysicsAndCamera() {
     if (pY < cameraY - 300) { subState = 2; stateTimer = 0; } // Trigger Game Over Intro
 }
 
-void drawPlayer(int level) {
-
-    if(level == 1){
-
-    glColor3f(1, 1, 1); glPushMatrix(); glTranslatef(pX, pY, 0);
-    drawLineDDA(-10, -10, 10, -10); drawLineDDA(10, -10, 10, 10);
-    drawLineDDA(10, 10, -10, 10); drawLineDDA(-10, 10, -10, -10);
+void drawPlayer() {
+    glColor3f(1, 1, 1);               // white color
+    glPushMatrix();
+    glTranslatef(pX, pY, 0);          // move to player position
+    drawLineDDA(-10, -10, 10, -10);   // bottom line
+    drawLineDDA(10, -10, 10, 10);     // right line
+    drawLineDDA(10, 10, -10, 10);     // top line
+    drawLineDDA(-10, 10, -10, -10);   // left line
     glPopMatrix();
 
     }
