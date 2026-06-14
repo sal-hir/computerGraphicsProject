@@ -3,22 +3,33 @@
 #include <GL/glut.h>
 #include <cmath>
 
-void drawPixel(int x, int y) { glBegin(GL_POINTS); glVertex2i(x, y); glEnd(); }
+void drawPixel(int x, int y) {
+    glBegin(GL_POINTS);  //tell OpenGL we are drawing points
+    glVertex2i(x, y); //place the dot here
+    glEnd();
+}
 
 void drawLineDDA(int x1, int y1, int x2, int y2) {
     float dx = x2 - x1, dy = y2 - y1;
     float steps = std::max(abs(dx), abs(dy));
     float xInc = dx / steps, yInc = dy / steps;
     float x = x1, y = y1;
-    for (int i = 0; i <= steps; i++) { drawPixel(round(x), round(y)); x += xInc; y += yInc; }
+    for (int i = 0; i <= steps; i++) {
+            drawPixel(round(x), round(y));
+            x += xInc; y += yInc;
+    }
 }
 
 void drawLineBres(int x1, int y1, int x2, int y2) {
-    int dx = abs(x2 - x1), dy = abs(y2 - y1), sx = (x1 < x2) ? 1 : -1, sy = (y1 < y2) ? 1 : -1, err = dx - dy;
+    int dx = abs(x2 - x1), dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
     while (true) {
-        drawPixel(x1, y1); if (x1 == x2 && y1 == y2) break;
+        drawPixel(x1, y1);
+        if (x1 == x2 && y1 == y2) break; //plot current pixel & stop when end point reached
         int e2 = 2 * err;
-        if (e2 > -dy) { err -= dy; x1 += sx; }
+        if (e2 > -dy) { err -= dy; x1 += sx; } //decides whether to move in X direction
         if (e2 < dx) { err += dx; y1 += sy; }
     }
 }
