@@ -1,3 +1,4 @@
+#define GLUT_DISABLE_ATEXIT_HACK
 #include "algorithms.h"
 #include <GL/glut.h>
 #include <cmath>

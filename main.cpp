@@ -1,6 +1,8 @@
 #include <GL/glut.h>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
+#include <algorithm>
 #include "globals.h"
 #include "algorithms.h"
 #include "levels.h"
@@ -22,6 +24,7 @@ float cameraY = 0,
 bool moveLeft = false, moveRight = false;
 
 std::vector<Platform> platforms; std::vector<Obstacle> obstacles;
+std::vector<Planet> planets;  //level 1 planets
 
 void initLevel(int level) {
     gameState = level;
@@ -68,6 +71,38 @@ void handlePhysicsAndCamera() {
             plat.bounces++;
             jumpCount++;
         }
+    }
+
+     // Planet collision - Level 1 only
+    if (gameState == 1) {
+        for (auto& planet : planets) {
+            if (!planet.collected) {
+                float dx = pX - planet.x;
+                float dy = pY - planet.y;
+                float dist = sqrt(dx*dx + dy*dy);
+                if (dist < planet.radius + 10) {
+                    planet.collected = true;
+                    score += 50;
+                }
+            }
+        }
+
+        // Spawn new planets
+        if (rand() % 100 < 5) {
+            Planet p;
+            p.x = (float)(rand() % 400 - 200);
+            p.y = platforms.back().y + rand() % 100;
+            p.radius = 15.0f;
+            p.collected = false;
+            planets.push_back(p);
+        }
+
+        // Clean old planets
+        planets.erase(
+            std::remove_if(planets.begin(), planets.end(),
+                [&](const Planet& p) { return p.y < cameraY - 350; }),
+            planets.end()
+        );
     }
 
     if (pY > cameraY + 100)
@@ -132,23 +167,34 @@ void display() {
     else if (subState == 0) drawIntro();
     else if (subState == 2) drawOutro();
     else {
-        glPushMatrix(); // create a copy of current coordinate matrix
-        glTranslatef(0, -cameraY, 0); //translate the world downward
+        glPushMatrix(); glTranslatef(0, -cameraY, 0);
+        if (gameState == 1) drawLevel1(); else if (gameState == 2) drawLevel2(); else if (gameState == 3) drawLevel3(); else if (gameState == 4) drawLevel4();
 
-        if (gameState == 1)
-            drawLevel1();
-        else if (gameState == 2)
-            drawLevel2();
-        else if (gameState == 3)
-            drawLevel3();
-        else if (gameState == 4)
-            drawLevel4();
+         // Draw planets - Level 1 only
+        if (gameState == 1) {
+            for (auto& planet : planets) {
+                if (!planet.collected) {
+                    glColor3f(0.8, 0.3, 0.1); // Red outer
+                    for(int a = 0; a < 360; a++) {
+                        float rad = a * 3.14159f / 180;
+                        drawPixel(planet.x + cos(rad) * planet.radius,
+                                 planet.y + sin(rad) * planet.radius);
+                    }
+                    glColor3f(0.5, 0.7, 1.0); // Blue inner
+                    for(int a = 0; a < 360; a++) {
+                        float rad = a * 3.14159f / 180;
+                        drawPixel(planet.x + cos(rad) * (planet.radius - 5),
+                                 planet.y + sin(rad) * (planet.radius - 5));
+                    }
+                }
+            }
+        }
 
-        drawPlayer(gameState); //draw the player
+        drawPlayer(gameState);
         glPopMatrix();
-        //score details
-        glColor3f(1, 1, 1);
-        drawText(-230, 270, "Score: " + std::to_string(score) + " | Jumps: " + std::to_string(jumpCount), GLUT_BITMAP_9_BY_15);
+        glColor3f(1, 1, 1); drawText(-230, 270, "Score: " + std::to_string(score) + " | Jumps: " + std::to_string(jumpCount), GLUT_BITMAP_9_BY_15);
+        if (gameState == 1)
+            drawText(-230, 250, "Collect planets: +50!", GLUT_BITMAP_8_BY_13);
     }
     glutSwapBuffers(); //for double buffering
 }
@@ -198,7 +244,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv); //initilise GLUT library
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
     glutInitWindowSize(500, 600); //window size
-    glutCreateWindow(" •• Pixel Leap •• ");
+    glutCreateWindow(" â€¢â€¢ Pixel Leap â€¢â€¢ ");
     glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(-250, 250, -300, 300); //coordinate plane
