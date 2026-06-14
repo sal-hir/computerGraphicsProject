@@ -15,8 +15,10 @@ extern bool moveLeft, moveRight;
 
 struct Platform { float x, y, w, vx; int bounces; }; // platform object       bounces = how many times player jumped on it
 struct Obstacle { float x, y, w, angle; };
+struct Planet { float x, y, radius; bool collected; }; //level 1
 
 extern std::vector<Platform> platforms;   //list of all platforms currently in the game
 extern std::vector<Obstacle> obstacles;
+extern std::vector<Planet> planets; //level 1
 
 #endif
