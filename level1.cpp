@@ -8,8 +8,13 @@ void resetLevel1() {
     gravity = 0.4; jumpStrength = 12.0;
     glClearColor(0.02, 0.02, 0.15, 1);  // Space dark background
 
-    platforms.push_back({0, -250, 80, 0, 0});
-    for(int i = 0; i < 10; i++) platforms.push_back({(float)(rand() % 400 - 200), -100.0f + i * 80, 60, (float)(rand()%5 - 2), 0});
+    platforms.push_back({0, -250, 80, 2, 0});
+
+     for(int i = 0; i < 10; i++) {
+        float vx;
+        do { vx = (float)(rand()%5 - 2); } while(vx == 0);
+        platforms.push_back({(float)(rand() % 400 - 200), -100.0f + i * 80, 60, vx, 0});
+    }
 
 // Initial planets
     planets.clear();
