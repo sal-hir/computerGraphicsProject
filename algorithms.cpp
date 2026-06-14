@@ -31,37 +31,6 @@ void drawCircleBres(int cx, int cy, int r) {
     }
 }
 
-void floodFill(float x, float y, float r, float g, float b) {
-    glColor3f(r, g, b); glRectf(x-10, y-10, x+10, y+10);
-}
-
-const int LEFT = 1, RIGHT = 2, BOTTOM = 4, TOP = 8;
-int getCode(double x, double y, double xMin, double xMax, double yMin, double yMax) {
-    int code = 0;
-    if (x < xMin) code |= LEFT; else if (x > xMax) code |= RIGHT;
-    if (y < yMin) code |= BOTTOM; else if (y > yMax) code |= TOP;
-    return code;
-}
-
-void drawClippedLine(double x1, double y1, double x2, double y2, double xMin, double xMax, double yMin, double yMax) {
-    int code1 = getCode(x1, y1, xMin, xMax, yMin, yMax), code2 = getCode(x2, y2, xMin, xMax, yMin, yMax);
-    bool accept = false;
-    while (true) {
-        if ((code1 == 0) && (code2 == 0)) { accept = true; break; }
-        else if (code1 & code2) break;
-        else {
-            int out = code1 ? code1 : code2; double x, y;
-            if (out & TOP) { x = x1 + (x2 - x1) * (yMax - y1) / (y2 - y1); y = yMax; }
-            else if (out & BOTTOM) { x = x1 + (x2 - x1) * (yMin - y1) / (y2 - y1); y = yMin; }
-            else if (out & RIGHT) { y = y1 + (y2 - y1) * (xMax - x1) / (x2 - x1); x = xMax; }
-            else if (out & LEFT) { y = y1 + (y2 - y1) * (xMin - x1) / (x2 - x1); x = xMin; }
-            if (out == code1) { x1 = x; y1 = y; code1 = getCode(x1, y1, xMin, xMax, yMin, yMax); }
-            else { x2 = x; y2 = y; code2 = getCode(x2, y2, xMin, xMax, yMin, yMax); }
-        }
-    }
-    if (accept) drawLineDDA(x1, y1, x2, y2);
-}
-
 void drawText(float x, float y, std::string s, void* font) {
     glRasterPos2f(x, y); for (char c : s) glutBitmapCharacter(font, c);
 }
