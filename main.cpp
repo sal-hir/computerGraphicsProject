@@ -18,7 +18,8 @@ void initLevel(int level) {
 }
 
 void handlePhysicsAndCamera() {
-    pVy -= gravity; pY += pVy;
+    pVy -= gravity;
+    pY += pVy;
 
     if (moveLeft) pX -= 5;
     if (moveRight) pX += 5;
@@ -35,7 +36,11 @@ void handlePhysicsAndCamera() {
         }
     }
 
-    if (pY > cameraY + 100) { cameraY = pY - 100; score = (int)cameraY + 300; }
+    if (pY > cameraY + 100)
+        {
+            cameraY = pY - 100;
+            score = (int)cameraY + 300;
+        }
 
     // Generator
     if (platforms.back().y < cameraY + 400) {
