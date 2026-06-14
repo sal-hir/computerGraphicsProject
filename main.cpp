@@ -6,9 +6,18 @@
 #include "levels.h"
 
 //gamestate (0 menu, 1-4 levels) substate (0 intro, 1 playing, 2 game over)
-int gameState = 0, subState = 0, stateTimer = 0, score = 0, jumpCount = 0;
+int gameState = 0,
+subState = 0,
+stateTimer = 0,
+score = 0,
+jumpCount = 0;
 //camera position, player positions, player velocity, gravity(how quickly come down), jump_strength(how high)
-float cameraY = 0, pX = 0, pY = 0, pVy = 0, gravity = 0.4, jumpStrength = 12.0;
+float cameraY = 0,
+ pX = 0,
+  pY = 0,
+  pVy = 0,
+  gravity = 0.4,
+  jumpStrength = 12.0;
 //left right movements
 bool moveLeft = false, moveRight = false;
 
