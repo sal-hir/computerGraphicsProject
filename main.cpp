@@ -23,13 +23,13 @@ void handlePhysicsAndCamera() {
         }
     }
     if (pY > cameraY + 100) { cameraY = pY - 100; score = (int)cameraY + 300; }
-    
+
     // Platform Generation
     if (platforms.back().y < cameraY + 400) {
         platforms.push_back({(float)(rand() % 400 - 200), platforms.back().y + (rand() % 40 + 50), (gameState==2)?150.0f:60.0f, (gameState==1)?(float)(rand()%5-2):0});
         if (gameState == 3 && rand() % 100 < 50) obstacles.push_back({platforms.back().x, platforms.back().y + 30, 40, 0});
     }
-    
+
     if (platforms.front().y < cameraY - 350) platforms.erase(platforms.begin());
     if (pY < cameraY - 300) gameState = 5; // Game Over
 }
@@ -48,7 +48,7 @@ void display() {
     else if (gameState == 5) drawGameOver();
     else {
         glPushMatrix(); glTranslatef(0, -cameraY, 0);
-        
+
         if (gameState == 1) drawLevel1();
         else if (gameState == 2) drawLevel2();
         else if (gameState == 3) drawLevel3();
@@ -56,7 +56,7 @@ void display() {
 
         drawPlayer();
         glPopMatrix();
-        
+
         glColor3f(1, 1, 1); drawText(-230, 270, "Score: " + std::to_string(score), GLUT_BITMAP_9_BY_15);
     }
     glutSwapBuffers();
@@ -74,7 +74,7 @@ void update(int value) {
 }
 
 void keyboard(unsigned char key, int x, int y) {
-    if (gameState == 0 && key >= '1' && key <= '4') { 
+    if (gameState == 0 && key >= '1' && key <= '4') {
         gameState = key - '0'; pX=0; pY=-200; pVy=12; cameraY=-300; score=0; platforms.clear(); obstacles.clear();
         if (gameState == 1) resetLevel1(); else if (gameState == 2) resetLevel2(); else if (gameState == 3) resetLevel3(); else if (gameState == 4) resetLevel4();
     }
