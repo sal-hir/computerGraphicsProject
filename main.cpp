@@ -20,10 +20,8 @@ void initLevel(int level) {
 void handlePhysicsAndCamera() {
     pVy -= gravity; pY += pVy;
 
-    // Level 4 Input Reversal check
-    bool flipInput = (gameState == 4 && (jumpCount / 2) % 2 != 0);
-    if ((moveLeft && !flipInput) || (moveRight && flipInput)) pX -= 5;
-    if ((moveRight && !flipInput) || (moveLeft && flipInput)) pX += 5;
+    if (moveLeft) pX -= 5;
+    if (moveRight) pX += 5;
 
     if (pX < -250) pX = 250; if (pX > 250) pX = -250;
 

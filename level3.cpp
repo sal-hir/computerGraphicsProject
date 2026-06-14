@@ -16,12 +16,14 @@ void resetLevel3() {
 
 void updateLevel3() {
     for (auto& obs : obstacles) {
-        obs.angle += 3.0f;
+        obs.angle += 20.0f; // Update rotation
+
         // Collision Detection: Distance to rod center
         float dist = sqrt(pow(pX - obs.x, 2) + pow(pY - obs.y, 2));
+
+        // Always boost upward regardless of impact side
         if (dist < obs.w / 2.0f) {
-            if (pY > obs.y) pVy = jumpStrength * 1.5; // Boost up
-            else pVy = -jumpStrength; // Slam down
+            pVy = jumpStrength * 1.5; // Massive upward boost
         }
     }
 }
