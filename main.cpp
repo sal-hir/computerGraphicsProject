@@ -8,9 +8,18 @@
 #include "levels.h"
 
 //gamestate (0 menu, 1-4 levels) substate (0 intro, 1 playing, 2 game over)
-int gameState = 0, subState = 0, stateTimer = 0, score = 0, jumpCount = 0;
+int gameState = 0,
+subState = 0,
+stateTimer = 0,
+score = 0,
+jumpCount = 0;
 //camera position, player positions, player velocity, gravity(how quickly come down), jump_strength(how high)
-float cameraY = 0, pX = 0, pY = 0, pVy = 0, gravity = 0.4, jumpStrength = 12.0;
+float cameraY = 0,
+ pX = 0,
+  pY = 0,
+  pVy = 0,
+  gravity = 0.4,
+  jumpStrength = 12.0;
 //left right movements
 bool moveLeft = false, moveRight = false;
 
@@ -18,9 +27,16 @@ std::vector<Platform> platforms; std::vector<Obstacle> obstacles;
 std::vector<Planet> planets;  //level 1 planets
 
 void initLevel(int level) {
-    gameState = level; subState = 0; stateTimer = 60; // 1-second intro
-    pX = 0; pY = -200; pVy = 12; cameraY = -300; score = 0; jumpCount = 0;
-    platforms.clear(); obstacles.clear(); planets.clear(); //clear out arrays
+    gameState = level;
+    subState = 0;
+    stateTimer = 120; // 2 second intro
+    pX = 0;
+    pY = -200;
+    pVy = 12;
+    cameraY = -300;  //starts in the bottom
+    score = 0;
+    jumpCount = 0;
+    platforms.clear(); obstacles.clear(); //clear out arrays
     if(level==1)
         resetLevel1();
     else if(level==2)
@@ -36,12 +52,18 @@ void handlePhysicsAndCamera() {
     pY += pVy; //update base on velocity
 
     //left right movements
-    if (moveLeft) pX -= 5;
-    if (moveRight) pX += 5;
-
-    if (pX < -250) pX = 250; if (pX > 250) pX = -250;
+    if (moveLeft)
+        pX -= 5;
+    if (moveRight)
+        pX += 5;
+//loop around if character goes off screen
+    if (pX < -250)
+        pX = 250;
+    if (pX > 250)
+        pX = -250;
 
     for (auto& plat : platforms) {
+            //platform width (width changes for level 3)
         float effWidth = (gameState == 2) ? plat.w * (1.0f - (plat.bounces * 0.33f)) : plat.w;
         // Collision Detection
         if (pVy < 0 && pY - 15 <= plat.y && pY - 15 >= plat.y - 15 && pX >= plat.x - effWidth/2 && pX <= plat.x + effWidth/2) {
@@ -85,7 +107,7 @@ void handlePhysicsAndCamera() {
 
     if (pY > cameraY + 100)
         {
-            cameraY = pY - 100;
+            cameraY = pY - 100; //move camera
             score = (int)cameraY + 300;
         }
 
@@ -174,7 +196,7 @@ void display() {
         if (gameState == 1)
             drawText(-230, 250, "Collect planets: +50!", GLUT_BITMAP_8_BY_13);
     }
-    glutSwapBuffers();
+    glutSwapBuffers(); //for double buffering
 }
 
 void update(int value) {
@@ -191,24 +213,48 @@ void update(int value) {
 
 //level selection and reset
 void keyboard(unsigned char key, int x, int y) {
-    if (gameState == 0 && key >= '1' && key <= '4') initLevel(key - '0');
-    if (subState == 2 && (key == 'm' || key == 'M')) { gameState = 0; subState = 0; glClearColor(0,0,0,1); }
-    if (key == 27) exit(0);
+    if (gameState == 0 && key >= '1' && key <= '4')
+        initLevel(key - '0'); //to get int value from ascii
+    if (subState == 2 && (key == 'm' || key == 'M'))
+    {
+        gameState = 0;
+        subState = 0;
+        glClearColor(0,0,0,1);
+    }
+    if (key == 27) //esc button kills the game
+        exit(0);
 }
-void specialDown(int key, int x, int y)
+void specialDown(int key, int x, int y) //clicking down arrow keys
 {
     if (key == GLUT_KEY_LEFT)
         moveLeft = true;
     if (key == GLUT_KEY_RIGHT)
         moveRight = true;
 }
-void specialUp(int key, int x, int y) { if (key == GLUT_KEY_LEFT) moveLeft = false; if (key == GLUT_KEY_RIGHT) moveRight = false; }
+void specialUp(int key, int x, int y) //releasing arrow keys
+{
+    if (key == GLUT_KEY_LEFT)
+        moveLeft = false;
+    if (key == GLUT_KEY_RIGHT)
+        moveRight = false;
+}
 
 int main(int argc, char** argv) {
-    srand(time(0)); glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); glutInitWindowSize(500, 600);
-    glutCreateWindow("Algo Jump - Final Edition");
-    glMatrixMode(GL_PROJECTION); gluOrtho2D(-250, 250, -300, 300); glMatrixMode(GL_MODELVIEW);
-    glutDisplayFunc(display); glutKeyboardFunc(keyboard); glutSpecialFunc(specialDown); glutSpecialUpFunc(specialUp);
-    glutTimerFunc(16, update, 0); glutMainLoop(); return 0;
+    srand(time(0));  //random number generator
+    glutInit(&argc, argv); //initilise GLUT library
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
+    glutInitWindowSize(500, 600); //window size
+    glutCreateWindow(" •• Pixel Leap •• ");
+    glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(-250, 250, -300, 300); //coordinate plane
+    glMatrixMode(GL_MODELVIEW);
+
+    glutDisplayFunc(display); //the display function to run on refreshes
+    glutKeyboardFunc(keyboard); //keyboard function to track key presses
+    glutSpecialFunc(specialDown); //special key press
+    glutSpecialUpFunc(specialUp);//special key release
+    glutTimerFunc(16, update, 0); //redraw game evry 16 ms
+    glutMainLoop(); //loop the window over and over
+    return 0;
 }
