@@ -15,8 +15,15 @@ bool moveLeft = false, moveRight = false;
 std::vector<Platform> platforms; std::vector<Obstacle> obstacles;
 
 void initLevel(int level) {
-    gameState = level; subState = 0; stateTimer = 60; // 1-second intro
-    pX = 0; pY = -200; pVy = 12; cameraY = -300; score = 0; jumpCount = 0;
+    gameState = level;
+    subState = 0;
+    stateTimer = 120; // 2 second intro
+    pX = 0;
+    pY = -200;
+    pVy = 12;
+    cameraY = -300;  //starts in the bottom
+    score = 0;
+    jumpCount = 0;
     platforms.clear(); obstacles.clear(); //clear out arrays
     if(level==1)
         resetLevel1();
@@ -181,16 +188,18 @@ int main(int argc, char** argv) {
     srand(time(0));  //random number generator
     glutInit(&argc, argv); //initilise GLUT library
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
-     glutInitWindowSize(900, 600); //window size
+    glutInitWindowSize(500, 600); //window size
     glutCreateWindow(" •• Pixel Leap •• ");
+    glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
     glMatrixMode(GL_PROJECTION);
-    gluOrtho2D(-450, 450, -300, 300);
+    gluOrtho2D(-250, 250, -300, 300); //coordinate plane
     glMatrixMode(GL_MODELVIEW);
-    glutDisplayFunc(display);
-    glutKeyboardFunc(keyboard);
-    glutSpecialFunc(specialDown);
-    glutSpecialUpFunc(specialUp);
-    glutTimerFunc(16, update, 0);
-    glutMainLoop();
+
+    glutDisplayFunc(display); //the display function to run on refreshes
+    glutKeyboardFunc(keyboard); //keyboard function to track key presses
+    glutSpecialFunc(specialDown); //special key press
+    glutSpecialUpFunc(specialUp);//special key release
+    glutTimerFunc(16, update, 0); //redraw game evry 16 ms
+    glutMainLoop(); //loop the window over and over
     return 0;
 }
