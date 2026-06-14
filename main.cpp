@@ -47,7 +47,7 @@ void handlePhysicsAndCamera() {
             //platform width (width changes for level 3)
         float effWidth = (gameState == 2) ? plat.w * (1.0f - (plat.bounces * 0.33f)) : plat.w;
         // Collision Detection
-        if (pVy < 0 && plat.bounces < 3 && pY - 15 <= plat.y && pY - 15 >= plat.y - 15 && pX >= plat.x - effWidth/2 && pX <= plat.x + effWidth/2) {
+        if (pVy < 0 && pY - 15 <= plat.y && pY - 15 >= plat.y - 15 && pX >= plat.x - effWidth/2 && pX <= plat.x + effWidth/2) {
             pVy = jumpStrength;
             plat.bounces++;
             jumpCount++;
@@ -178,10 +178,19 @@ void specialUp(int key, int x, int y) //releasing arrow keys
 }
 
 int main(int argc, char** argv) {
-    srand(time(0)); glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); glutInitWindowSize(500, 600);
-    glutCreateWindow("Algo Jump - Final Edition");
-    glMatrixMode(GL_PROJECTION); gluOrtho2D(-250, 250, -300, 300); glMatrixMode(GL_MODELVIEW);
-    glutDisplayFunc(display); glutKeyboardFunc(keyboard); glutSpecialFunc(specialDown); glutSpecialUpFunc(specialUp);
-    glutTimerFunc(16, update, 0); glutMainLoop(); return 0;
+    srand(time(0));  //random number generator
+    glutInit(&argc, argv); //initilise GLUT library
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
+     glutInitWindowSize(900, 600); //window size
+    glutCreateWindow(" •• Pixel Leap •• ");
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(-450, 450, -300, 300);
+    glMatrixMode(GL_MODELVIEW);
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialDown);
+    glutSpecialUpFunc(specialUp);
+    glutTimerFunc(16, update, 0);
+    glutMainLoop();
+    return 0;
 }

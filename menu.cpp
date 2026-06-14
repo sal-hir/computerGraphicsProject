@@ -5,7 +5,7 @@
 
 void drawMenu() {
     glColor3f(1, 1, 1);
-    drawText(-120, 150, "ALGO JUMP!", GLUT_BITMAP_TIMES_ROMAN_24);
+    drawText(-120, 150, "Pixel-Leap", GLUT_BITMAP_TIMES_ROMAN_24);
     drawText(-150, 50, "1: Moving Platforms", GLUT_BITMAP_9_BY_15);
     drawText(-150, 20, "2: 3-Step Shrink", GLUT_BITMAP_9_BY_15);
     drawText(-150, -10, "3: Boost/Slam Rods", GLUT_BITMAP_9_BY_15);
