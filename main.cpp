@@ -41,7 +41,7 @@ void handlePhysicsAndCamera() {
     for (auto& plat : platforms) {
         float effWidth = (gameState == 2) ? plat.w * (1.0f - (plat.bounces * 0.33f)) : plat.w;
         // Collision Detection
-        if (pVy < 0 && plat.bounces < 3 && pY - 15 <= plat.y && pY - 15 >= plat.y - 15 && pX >= plat.x - effWidth/2 && pX <= plat.x + effWidth/2) {
+        if (pVy < 0 && pY - 15 <= plat.y && pY - 15 >= plat.y - 15 && pX >= plat.x - effWidth/2 && pX <= plat.x + effWidth/2) {
             pVy = jumpStrength;
             plat.bounces++;
             jumpCount++;
