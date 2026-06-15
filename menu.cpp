@@ -13,7 +13,7 @@ void drawMenu() {
 }
 
 void drawIntro() {
-     glColor3f(0.0f, 0.8f, 0.0f); // Matrix green color for sparks
+    glColor3f(0.0f, 0.8f, 0.0f); // Matrix green color for sparks
     glPointSize(2.0f);            // Make the dots visible
     // Draw the level text
     glColor3f(0, 1, 0);
@@ -37,6 +37,10 @@ void drawIntro() {
     drawCircleBres(0, -50, r * 3); // Third circle
     glFlush();
     }
+    glPointSize(1.0f); // Reset pixel point size back to default
+
+    glColor3f(0, 1, 0); // Bright Green
+    drawText(-100, 0, "LEVEL " + std::to_string(gameState) + " STARTING", GLUT_BITMAP_TIMES_ROMAN_24);
 }
 void drawOutro() {
      glColor3f(0.8f, 0.8f, 0.5f); //star color
