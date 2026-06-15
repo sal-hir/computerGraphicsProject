@@ -178,7 +178,14 @@ void display() {
     else if (subState == 2) drawOutro();
     else {
         glPushMatrix(); glTranslatef(0, -cameraY, 0);
-        if (gameState == 1) drawLevel1(); else if (gameState == 2) drawLevel2(); else if (gameState == 3) drawLevel3(); else if (gameState == 4) drawLevel4();
+        if (gameState == 1)
+            drawLevel1();
+        else if (gameState == 2)
+            drawLevel2();
+        else if (gameState == 3)
+            drawLevel3();
+        else if (gameState == 4)
+            drawLevel4();
 
          // Draw planets - Level 1 only
         if (gameState == 1) {
@@ -254,7 +261,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv); //initilise GLUT library
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
     glutInitWindowSize(500, 600); //window size
-    glutCreateWindow(" •• Pixel Leap •• ");
+    glutCreateWindow(" ** Pixel Leap ** ");
     glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(-250, 250, -300, 300); //coordinate plane
