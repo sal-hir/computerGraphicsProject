@@ -47,28 +47,31 @@ void drawText(float x, float y, std::string s, void* font) {
     glRasterPos2f(x, y); for (char c : s) glutBitmapCharacter(font, c);
 }
 
-void floodFill4(int x, int y, float* oldColor, float* newColor)
+void boundaryFill4(int x, int y, float* borderColor, float* fillColor)
 {
-    // RGB values of current pixel
-    float color[3];
+    float currentColor[3];
 
-    // Read one pixel
-    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, color);
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, currentColor);
 
-    // Compare RGB components
-    if (std::abs(color[0] - oldColor[0]) < 0.01f &&
-        std::abs(color[1] - oldColor[1]) < 0.01f &&
-        std::abs(color[2] - oldColor[2]) < 0.01f)
+    bool isBoundary =
+        (std::abs(currentColor[0] - borderColor[0]) < 0.01f &&
+         std::abs(currentColor[1] - borderColor[1]) < 0.01f &&
+         std::abs(currentColor[2] - borderColor[2]) < 0.01f);
+
+    bool isAlreadyFilled =
+        (std::abs(currentColor[0] - fillColor[0]) < 0.01f &&
+         std::abs(currentColor[1] - fillColor[1]) < 0.01f &&
+         std::abs(currentColor[2] - fillColor[2]) < 0.01f);
+
+    if (!isBoundary && !isAlreadyFilled)
     {
-        // Set new color
-        glColor3f(newColor[0], newColor[1], newColor[2]);
-
+        glColor3f(fillColor[0], fillColor[1], fillColor[2]);
         drawPixel(x, y);
         glFlush();
 
-        floodFill4(x + 1, y, oldColor, newColor);
-        floodFill4(x - 1, y, oldColor, newColor);
-        floodFill4(x, y + 1, oldColor, newColor);
-        floodFill4(x, y - 1, oldColor, newColor);
+        boundaryFill4(x + 1, y, borderColor, fillColor);
+        boundaryFill4(x - 1, y, borderColor, fillColor);
+        boundaryFill4(x, y + 1, borderColor, fillColor);
+        boundaryFill4(x, y - 1, borderColor, fillColor);
     }
 }

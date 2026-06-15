@@ -176,7 +176,14 @@ void display() {
     else if (subState == 2) drawOutro();
     else {
         glPushMatrix(); glTranslatef(0, -cameraY, 0);
-        if (gameState == 1) drawLevel1(); else if (gameState == 2) drawLevel2(); else if (gameState == 3) drawLevel3(); else if (gameState == 4) drawLevel4();
+        if (gameState == 1)
+            drawLevel1();
+        else if (gameState == 2)
+            drawLevel2();
+        else if (gameState == 3)
+            drawLevel3();
+        else if (gameState == 4)
+            drawLevel4();
 
          // Draw planets - Level 1 only
         if (gameState == 1) {

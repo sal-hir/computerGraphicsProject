@@ -13,26 +13,28 @@ void drawMenu() {
 }
 
 void drawIntro() {
-     glColor3f(0.0f, 0.8f, 0.0f); // Matrix green color for sparks
-    glPointSize(2.0f);            // Make the dots visible
-
-    // Loop across the screen from left to right in steps of 20 pixels
-    for (int x = -240; x <= 240; x += 20) {
-        // set vertical column  starting height offset
-        int heightOffset = (x % 7) * 60;
-
-         //  measure from -300 (bottom of screen) upward for y value
-        float sparkY = -300 + (((60 - stateTimer) * 4 + heightOffset) % 600);
-
-        // Draw the background dot
-        drawPixel(x, (int)sparkY);
-    }
-    glPointSize(1.0f); // Reset pixel point size back to default
-
-     glColor3f(0, 1, 0); // Bright Green
+    // Draw the level text
+    glColor3f(0, 1, 0);
     drawText(-100, 0, "LEVEL " + std::to_string(gameState) + " STARTING", GLUT_BITMAP_TIMES_ROMAN_24);
-}
 
+    // Calculate radius (starts small, maxes out at 35 to prevent crashes)
+    float progress = (120.0f - stateTimer) / 120.0f;
+    int r = 2 + (int)(progress * 33);
+
+    // 1. Draw the growing circle outline
+    glColor3f(0.0f, 1.0f, 0.0f);
+    drawCircleBres(0, -50, r);
+    glFlush();
+
+    // 2. Define colors
+    float borderColor[] = {0.0f, 1.0f, 0.0f};
+    float fillColor[]   = {0.02f, 0.02f, 0.15f};
+
+    // 3. NO PROJECTION CHANGE (REMOVE THIS BLOCK COMPLETELY)
+
+    // 4. Correct seed point (inside circle)
+    boundaryFill4(0, -50, borderColor, fillColor);
+}
 void drawOutro() {
      glColor3f(0.8f, 0.8f, 0.5f); //star color
     glPointSize(2.0f);            // Make the dots visible
