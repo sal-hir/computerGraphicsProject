@@ -30,10 +30,10 @@ void initLevel(int level) {
     gameState = level;
     subState = 0;
     stateTimer = 120; // 2 second intro
-    pX = 0;
+    pX = 0;                   //set player position
     pY = -200;
-    pVy = 12;
-    cameraY = -300;  //starts in the bottom
+    pVy = 12;                  //Player Vertical Velocity
+    cameraY = -300;  //starts in the bottom        set camera position
     score = 0;
     jumpCount = 0;
     platforms.clear(); obstacles.clear(); //clear out arrays
@@ -49,7 +49,7 @@ void initLevel(int level) {
 
 void handlePhysicsAndCamera() {
     pVy -= gravity; //track velocity
-    pY += pVy; //update base on velocity
+    pY += pVy; //Player moves upward base on velocity
 
     //left right movements
     if (moveLeft)
@@ -57,7 +57,7 @@ void handlePhysicsAndCamera() {
     if (moveRight)
         pX += 5;
 //loop around if character goes off screen
-    if (pX < -250)
+    if (pX < -250) //keep player in our viewport
         pX = 250;
     if (pX > 250)
         pX = -250;
@@ -68,12 +68,12 @@ void handlePhysicsAndCamera() {
 
         // Collision Detection
         if (pVy < 0 &&                                 // player is falling
-            plat.bounces < 3 &&                        // platform not vanished
-            pY - 15 <= plat.y &&                       // player bottom touches platform top
-            pY - 15 >= plat.y - 15 &&
+            plat.bounces < 3 &&                        // platform not vanished and it still exists
+            pY - 15 <= plat.y &&
+            pY - 15 >= plat.y - 15 &&                  // if player's feet are touching the platform top
             pX >= plat.x - effWidth/2 &&
-            pX <= plat.x + effWidth/2) {               // player within platform width
-            pVy = jumpStrength;                        // bounce player up
+            pX <= plat.x + effWidth/2) {               // player is horizontally within platform width (0 & 100)
+            pVy = jumpStrength;                        // bounce player up when hits platform pVy=12
             plat.bounces++;                            // shrink platform
             jumpCount++;
         }
@@ -111,20 +111,32 @@ void handlePhysicsAndCamera() {
         );
     }
 
-    if (pY > cameraY + 100)
+    if (pY > cameraY + 100)    //If player gets too high,
         {
-            cameraY = pY - 100; //move camera
+            cameraY = pY - 100; //move camera upward so camera following the player
             score = (int)cameraY + 300;
         }
 
-    // Generator
-    if (platforms.back().y < cameraY + 400) {
-        platforms.push_back({(float)(rand() % 200 - 100), platforms.back().y + (rand() % 40 + 50), (gameState==2)?100.0f:60.0f, (gameState==1)?(float)(rand()%5-2):0, 0});
+    // Generate new platforms if Not enough platforms above player
+    if (platforms.back().y < cameraY + 400) { //Last platform in vector(Highest Platform ) <  cameraY + 400
+        platforms.push_back({
+                            (float)(rand() % 200 - 100),
+                            platforms.back().y + (rand() % 40 + 50),
+                            (gameState==2)?100.0f:60.0f,
+                            (gameState==1)?(float)(rand()%5-2):0,
+                            0
+                            });
+
         if (gameState == 3 && rand() % 100 < 50) obstacles.push_back({platforms.back().x, platforms.back().y + 40, 60, 0});
     }
 
-    if (platforms.front().y < cameraY - 350) platforms.erase(platforms.begin());
-    if (pY < cameraY - 300) { subState = 2; stateTimer = 0; } // Trigger Game Over Intro
+    if (platforms.front().y < cameraY - 350) //Oldest platform(lowest platform) < cameraY - 350
+        platforms.erase(platforms.begin());    //Player is very high & remove lowest platform Nobody can ever see it again
+
+    if (pY < cameraY - 300) { //player is too far below the visible screen
+        subState = 2; //GAME OVER
+        stateTimer = 0; // Trigger Game Over Intro
+    }
 }
 
 void drawPlayer(int level) {
@@ -142,10 +154,14 @@ void drawPlayer(int level) {
 
       if(level == 2){
 
-    glColor3f(0.4, 0.7, 1); glPushMatrix(); glTranslatef(pX, pY, 0);
-    drawLineDDA(-10, -10, 10, -10); drawLineDDA(10, -10, 10, 10);
-    drawLineDDA(10, 10, -10, 10); drawLineDDA(-10, 10, -10, -10);
-    glPopMatrix();
+    glColor3f(0.4, 0.7, 1);  //Sets player color
+    glPushMatrix();        //Save current coordinate system
+    glTranslatef(pX, pY, 0);       //square drawn (0,-200) positions the player
+    drawLineDDA(-10, -10, 10, -10);  //bottom
+    drawLineDDA(10, -10, 10, 10); //right
+    drawLineDDA(10, 10, -10, 10); //top
+    drawLineDDA(-10, 10, -10, -10);//left
+    glPopMatrix(); //Restore original coordinate system
 
     }
 
@@ -170,13 +186,18 @@ void drawPlayer(int level) {
 }
 
 void display() {
-    glClear(GL_COLOR_BUFFER_BIT); glLoadIdentity();
-    if (gameState == 0) drawMenu();
-    else if (subState == 0) drawIntro();
-    else if (subState == 2) drawOutro();
+    glClear(GL_COLOR_BUFFER_BIT); //Erase previous frame
+    glLoadIdentity(); //Reset coordinate system
+    if (gameState == 0) drawMenu(); //menu is displayed
+    else if (subState == 0) drawIntro();//Draw intro animation
+    else if (subState == 2) drawOutro(); //Draw game over screen
     else {
-        glPushMatrix(); glTranslatef(0, -cameraY, 0);
-        if (gameState == 1) drawLevel1(); else if (gameState == 2) drawLevel2(); else if (gameState == 3) drawLevel3(); else if (gameState == 4) drawLevel4();
+        glPushMatrix(); //Save current coordinate system
+        glTranslatef(0, -cameraY, 0);    //if the player is very high than camera Move EVERYTHING down by cameraY units before drawing it.
+        if (gameState == 1) drawLevel1();
+        else if (gameState == 2) drawLevel2();
+        else if (gameState == 3) drawLevel3();
+        else if (gameState == 4) drawLevel4();
 
          // Draw planets - Level 1 only
         if (gameState == 1) {
@@ -199,8 +220,9 @@ void display() {
         }
 
         drawPlayer(gameState);
-        glPopMatrix();
-        glColor3f(1, 1, 1); drawText(-230, 270, "Score: " + std::to_string(score) + " | Jumps: " + std::to_string(jumpCount), GLUT_BITMAP_9_BY_15);
+        glPopMatrix();      //Restore old coordinate system
+        glColor3f(1, 1, 1); //white
+        drawText(-230, 270, "Score: " + std::to_string(score) + " | Jumps: " + std::to_string(jumpCount), GLUT_BITMAP_9_BY_15);
         if (gameState == 1)
             drawText(-230, 250, "Collect planets: +50!", GLUT_BITMAP_8_BY_13);
     }
@@ -209,21 +231,34 @@ void display() {
 
 void update(int value) {
     if (gameState >= 1 && gameState <= 4) {
-        if (subState == 0) { stateTimer--; if (stateTimer <= 0) subState = 1; } // Intro finish
+        if (subState == 0) {
+                stateTimer--;      //start countdown
+            if (stateTimer <= 0)
+                subState = 1; } // Intro finish
         else if (subState == 1) { // Playing
             handlePhysicsAndCamera();
-            if (gameState == 1) updateLevel1(); else if (gameState == 2) updateLevel2(); else if (gameState == 3) updateLevel3(); else if (gameState == 4) updateLevel4();
+            if (gameState == 1)
+                updateLevel1();
+            else if (gameState == 2)
+                updateLevel2();
+            else if (gameState == 3)
+                updateLevel3();
+            else if (gameState == 4)
+                updateLevel4();
         }
-        else if (subState == 2) { stateTimer++; } // Outro falling text
+        else if (subState == 2) {
+            stateTimer++;
+        } // Outro falling text
     }
-    glutPostRedisplay(); glutTimerFunc(16, update, 0);
+    glutPostRedisplay();         //call display function
+    glutTimerFunc(16, update, 0);
 }
 
 //level selection and reset
 void keyboard(unsigned char key, int x, int y) {
     if (gameState == 0 && key >= '1' && key <= '4')
-        initLevel(key - '0'); //to get int value from ascii
-    if (subState == 2 && (key == 'm' || key == 'M'))
+        initLevel(key - '0'); //to get int value from ascii      50-48 =2
+    if (subState == 2 && (key == 'm' || key == 'M'))        //return menu
     {
         gameState = 0;
         subState = 0;
@@ -248,12 +283,12 @@ void specialUp(int key, int x, int y) //releasing arrow keys
 }
 
 int main(int argc, char** argv) {
-    srand(time(0));  //random number generator
+    srand(time(0));  //random number generator which creates random platform positions
     glutInit(&argc, argv); //initilise GLUT library
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
     glutInitWindowSize(500, 600); //window size
     glutCreateWindow("Pixel Leap");
-    glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
+    glClearColor(0.0f, 0.0f, 0.2f, 0.4f); //Dark blue
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(-250, 250, -300, 300); //coordinate plane
     glMatrixMode(GL_MODELVIEW);
@@ -262,7 +297,7 @@ int main(int argc, char** argv) {
     glutKeyboardFunc(keyboard); //keyboard function to track key presses
     glutSpecialFunc(specialDown); //special key press
     glutSpecialUpFunc(specialUp);//special key release
-    glutTimerFunc(16, update, 0); //redraw game evry 16 ms
+    glutTimerFunc(16, update, 0); //redraw game every 16 ms
     glutMainLoop(); //loop the window over and over
     return 0;
 }

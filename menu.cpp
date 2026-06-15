@@ -13,7 +13,7 @@ void drawMenu() {
 }
 
 void drawIntro() {
-     glColor3f(0.0f, 0.8f, 0.0f); // Matrix green color for sparks
+    glColor3f(0.0f, 0.8f, 0.0f); // Matrix green color for sparks
     glPointSize(2.0f);            // Make the dots visible
 
     // Loop across the screen from left to right in steps of 20 pixels
@@ -29,7 +29,7 @@ void drawIntro() {
     }
     glPointSize(1.0f); // Reset pixel point size back to default
 
-     glColor3f(0, 1, 0); // Bright Green
+    glColor3f(0, 1, 0); // Bright Green
     drawText(-100, 0, "LEVEL " + std::to_string(gameState) + " STARTING", GLUT_BITMAP_TIMES_ROMAN_24);
 }
 
