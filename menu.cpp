@@ -29,9 +29,12 @@ void drawIntro() {
 
          //  measure from -300 (bottom of screen) upward for y value
         float sparkY = -300 + (((60 - stateTimer) * 4 + heightOffset) % 600);
-    // 1. Draw the growing circle outline
+        
+    // 1. Draw 3 growing circle outlines
     glColor3f(0.0f, 1.0f, 0.0f);
     drawCircleBres(0, -50, r);
+    drawCircleBres(0, -50, r * 2); // Second circle
+    drawCircleBres(0, -50, r * 3); // Third circle
     glFlush();
     }
 }
