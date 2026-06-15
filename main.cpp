@@ -99,6 +99,8 @@ void handlePhysicsAndCamera() {
             p.x = (float)(rand() % 400 - 200);
             p.y = platforms.back().y + rand() % 100;
             p.radius = 15.0f;
+            p.baseRadius = 15.0f;
+            p.pulseTimer = 0.0f;
             p.collected = false;
             planets.push_back(p);
         }
