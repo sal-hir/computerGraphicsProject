@@ -46,3 +46,51 @@ void drawCircleBres(int cx, int cy, int r) {
 void drawText(float x, float y, std::string s, void* font) {
     glRasterPos2f(x, y); for (char c : s) glutBitmapCharacter(font, c);
 }
+
+#include <queue>
+#include <vector>
+
+void boundaryFill4(int x, int y, float* borderColor, float* fillColor)
+{
+    std::queue<std::pair<int, int>> q;
+    q.push({x, y});
+
+    // To prevent stack overflow and incomplete fills, use an iterative queue
+    // and keep track of visited pixels. We use a locally allocated array.
+    std::vector<std::vector<bool>> visited(501, std::vector<bool>(601, false));
+
+    while (!q.empty()) {
+        std::pair<int, int> current = q.front();
+        int cx = current.first;
+        int cy = current.second;
+        q.pop();
+
+        if (cx < 0 || cx > 500 || cy < 0 || cy > 600) continue;
+        if (visited[cx][cy]) continue;
+        visited[cx][cy] = true;
+
+        float currentColor[3];
+        glReadPixels(cx, cy, 1, 1, GL_RGB, GL_FLOAT, currentColor);
+
+        bool isBoundary =
+            (std::abs(currentColor[0] - borderColor[0]) < 0.01f &&
+             std::abs(currentColor[1] - borderColor[1]) < 0.01f &&
+             std::abs(currentColor[2] - borderColor[2]) < 0.01f);
+
+        bool isAlreadyFilled =
+            (std::abs(currentColor[0] - fillColor[0]) < 0.01f &&
+             std::abs(currentColor[1] - fillColor[1]) < 0.01f &&
+             std::abs(currentColor[2] - fillColor[2]) < 0.01f);
+
+        if (!isBoundary && !isAlreadyFilled)
+        {
+            glColor3f(fillColor[0], fillColor[1], fillColor[2]);
+            drawPixel(cx, cy);
+
+            q.push({cx + 1, cy});
+            q.push({cx - 1, cy});
+            q.push({cx, cy + 1});
+            q.push({cx, cy - 1});
+        }
+    }
+}
