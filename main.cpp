@@ -142,24 +142,28 @@ void handlePhysicsAndCamera() {
 }
 
 void drawPlayer(int level) {
-    static GLuint pLists[5] = {0};
+    static GLuint pLists[5] = {0}; //store Ids of openGl display lists
     int l = (level >= 0 && level <= 4) ? level : 0;
 
+    //check if the playe is drawn. if not draw them
     if (pLists[l] == 0) {
         pLists[l] = glGenLists(1);
 
-        glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, 500, 0, 600);
+        //create a coordinae plane     //save           //reset
+        glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, 500, 0, 600); //bottom left start cooridnates
+        //yo add objects
         glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
 
         // Draw border to physical frame buffer so glReadPixels can find it
         glColor3f(1.0f, 1.0f, 1.0f); // White border
+        //draw the box
         drawLineDDA(240, 290, 260, 290);
         drawLineDDA(260, 290, 260, 310);
         drawLineDDA(260, 310, 240, 310);
         drawLineDDA(240, 310, 240, 290);
-        glFlush();
+        glFlush(); //put the box on screen
 
-        glNewList(pLists[l], GL_COMPILE);
+        glNewList(pLists[l], GL_COMPILE); //start saving
         // Draw border inside list so it's cached
         glColor3f(1.0f, 1.0f, 1.0f);
         drawLineDDA(240, 290, 260, 290);
@@ -168,7 +172,7 @@ void drawPlayer(int level) {
         drawLineDDA(240, 310, 240, 290);
 
         float border[3] = {1.0f, 1.0f, 1.0f};
-        float fill[3] = {1.0f, 1.0f, 1.0f}; // Default
+        float fill[3] = {1.0f, 1.0f, 1.0f}; // Default fill colur
 
         if (l == 1 || l == 0) {
             fill[0] = 1.0f; fill[1] = 0.0f; fill[2] = 0.0f; // Red fill
@@ -180,9 +184,10 @@ void drawPlayer(int level) {
             fill[0] = 1.0f; fill[1] = 0.5f; fill[2] = 0.0f; // Orange fill
         }
 
-        boundaryFill4(250, 300, border, fill);
-        glEndList();
+        boundaryFill4(250, 300, border, fill); //call boundary fill to fill the square
+        glEndList(); //end saving
 
+        //restore view
         glMatrixMode(GL_PROJECTION); glPopMatrix();
         glMatrixMode(GL_MODELVIEW); glPopMatrix();
 
@@ -300,7 +305,7 @@ int main(int argc, char** argv) {
     glutCreateWindow(" ** Pixel Leap ** ");
     glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
     glMatrixMode(GL_PROJECTION);
-    gluOrtho2D(-250, 250, -300, 300); //coordinate plane
+    gluOrtho2D(-250, 250, -300, 300); //coordinate plane start from the center
     glMatrixMode(GL_MODELVIEW);
 
     glutDisplayFunc(display); //the display function to run on refreshes
