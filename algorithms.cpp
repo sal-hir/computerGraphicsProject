@@ -73,14 +73,14 @@ void boundaryFill4(int x, int y, float* borderColor, float* fillColor)
         glReadPixels(cx, cy, 1, 1, GL_RGB, GL_FLOAT, currentColor);
 
         bool isBoundary =
-            (std::abs(currentColor[0] - borderColor[0]) < 0.01f &&
-             std::abs(currentColor[1] - borderColor[1]) < 0.01f &&
-             std::abs(currentColor[2] - borderColor[2]) < 0.01f);
+            (std::abs(currentColor[0] - borderColor[0]) < 0.05f &&
+             std::abs(currentColor[1] - borderColor[1]) < 0.05f &&
+             std::abs(currentColor[2] - borderColor[2]) < 0.05f);
 
         bool isAlreadyFilled =
-            (std::abs(currentColor[0] - fillColor[0]) < 0.01f &&
-             std::abs(currentColor[1] - fillColor[1]) < 0.01f &&
-             std::abs(currentColor[2] - fillColor[2]) < 0.01f);
+            (std::abs(currentColor[0] - fillColor[0]) < 0.05f &&
+             std::abs(currentColor[1] - fillColor[1]) < 0.05f &&
+             std::abs(currentColor[2] - fillColor[2]) < 0.05f);
 
         if (!isBoundary && !isAlreadyFilled)
         {
