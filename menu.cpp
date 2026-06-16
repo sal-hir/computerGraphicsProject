@@ -15,7 +15,7 @@ void drawMenu() {
 void drawIntro() {
     // Calculate animation progress based on the timer (120 down to 0)
  float progress = (120.0f - stateTimer) / 120.0f;
-    float scaleFactor = 1.0f + (progress * 50.0f); // Scale from 1x up to 17
+    float scaleFactor = 1.0f + (progress * 40.0f); // Scale from 1x up to 50
 
     glColor3f(0.0f, 1.0f, 0.0f);
 
