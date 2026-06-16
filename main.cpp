@@ -194,10 +194,10 @@ void drawPlayer(int level) {
     }
 
     glPushMatrix();
-    glTranslatef(pX, pY, 0);
     glTranslatef(-250, -300, 0); // Translate back from physical to logical origin
+    glTranslatef(pX, pY, 0);
     glCallList(pLists[l]);
-    glPopMatrix();
+    glPopMatrix(); //restore coordinates
 }
 
 void display() {
@@ -272,7 +272,7 @@ void update(int value) {
 //level selection and reset
 void keyboard(unsigned char key, int x, int y) {
     if (gameState == 0 && key >= '1' && key <= '4')
-        initLevel(key - '0'); //to get int value from ascii      50-48 =2
+        initLevel(key - '0'); //to get int value from ascii   50-48 =2
     if (subState == 2 && (key == 'm' || key == 'M'))        //return menu
     {
         gameState = 0;
@@ -303,7 +303,7 @@ int main(int argc, char** argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); //configure colours and double buffer
     glutInitWindowSize(500, 600); //window size
     glutCreateWindow(" ** Pixel Leap ** ");
-    glClearColor(0.0f, 0.0f, 0.2f, 0.4f);
+    glClearColor(0.0f, 0.0f, 0.2f, 0.4f); //set background colour
     glMatrixMode(GL_PROJECTION);
     gluOrtho2D(-250, 250, -300, 300); //coordinate plane start from the center
     glMatrixMode(GL_MODELVIEW);
