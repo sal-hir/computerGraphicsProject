@@ -13,34 +13,35 @@ void drawMenu() {
 }
 
 void drawIntro() {
-    glColor3f(0.0f, 0.8f, 0.0f); // Matrix green color for sparks
-    glPointSize(2.0f);            // Make the dots visible
-    // Draw the level text
-    glColor3f(0, 1, 0);
-    drawText(-100, 0, "LEVEL " + std::to_string(gameState) + " STARTING", GLUT_BITMAP_TIMES_ROMAN_24);
+    // Calculate animation progress based on the timer (120 down to 0)
+ float progress = (120.0f - stateTimer) / 120.0f;
+    float scaleFactor = 1.0f + (progress * 50.0f); // Scale from 1x up to 17
 
-    // Loop across the screen from left to right in steps of 20 pixels
-    for (int x = -240; x <= 240; x += 20) {
-        // set vertical column  starting height offset
-        int heightOffset = (x % 7) * 60;
-    // Calculate radius (starts small, maxes out at 35 to prevent crashes)
-    float progress = (120.0f - stateTimer) / 120.0f;
-    int r = 2 + (int)(progress * 33);
-
-         //  measure from -300 (bottom of screen) upward for y value
-        float sparkY = -300 + (((60 - stateTimer) * 4 + heightOffset) % 600);
-        
-    // 1. Draw 3 growing circle outlines
     glColor3f(0.0f, 1.0f, 0.0f);
-    drawCircleBres(0, -50, r);
-    drawCircleBres(0, -50, r * 2); // Second circle
-    drawCircleBres(0, -50, r * 3); // Third circle
-    glFlush();
-    }
-    glPointSize(1.0f); // Reset pixel point size back to default
 
-    glColor3f(0, 1, 0); // Bright Green
+    glPushMatrix(); // Save center state
+    glTranslatef(0, -50, 0); // Move to where the circles belong
+    glScalef(scaleFactor, scaleFactor, 1.0f); // Stretch the world!
+
+    // Draw base circles with a static radius (e.g., 2, 4, 6)
+    drawCircleBres(0, 0, 2);
+    drawCircleBres(0, 0, 4);
+    drawCircleBres(0, 0, 6);
+    drawCircleBres(0, 0, 8);
+    drawCircleBres(0, 0, 10);
+    drawCircleBres(0, 0, 12);
+    drawCircleBres(0, 0, 14);
+
+
+
+
+    glPopMatrix(); // Shrink the world back to normal
+    // 3. Draw the intro text
+    glColor3f(0.0f, 1.0f, 0.0f); // Bright green
     drawText(-100, 0, "LEVEL " + std::to_string(gameState) + " STARTING", GLUT_BITMAP_TIMES_ROMAN_24);
+
+    // Push the drawing to the screen
+    glFlush();
 }
 void drawOutro() {
      glColor3f(0.8f, 0.8f, 0.5f); //star color
