@@ -128,9 +128,10 @@ void handlePhysicsAndCamera() {
 }
 
 void drawPlayer(int level) {
-    static GLuint pLists[5] = {0};
-    int l = (level >= 0 && level <= 4) ? level : 0;
+    static GLuint pLists[5] = {0}; //store id for openGL display lists
+    int l = (level >= 0 && level <= 4) ? level : 0; //catch and fix out of bound level inputs
 
+    //check if display list is generated
     if (pLists[l] == 0) {
         pLists[l] = glGenLists(1);
 
@@ -147,7 +148,7 @@ void drawPlayer(int level) {
 
         glNewList(pLists[l], GL_COMPILE);
         // Draw border inside list so it's cached
-        glColor3f(1.0f, 1.0f, 1.0f); 
+        glColor3f(1.0f, 1.0f, 1.0f);
         drawLineDDA(240, 290, 260, 290);
         drawLineDDA(260, 290, 260, 310);
         drawLineDDA(260, 310, 240, 310);
@@ -193,7 +194,7 @@ void drawPlayer(int level) {
 
             glNewList(pList2, GL_COMPILE);
             // Draw border inside list so it's cached
-            glColor3f(0.4f, 0.7f, 1.0f); 
+            glColor3f(0.4f, 0.7f, 1.0f);
             drawLineDDA(240, 290, 260, 290);
             drawLineDDA(260, 290, 260, 310);
             drawLineDDA(260, 310, 240, 310);
@@ -233,7 +234,7 @@ void drawPlayer(int level) {
 
             glNewList(pList3, GL_COMPILE);
             // Draw border inside list so it's cached
-            glColor3f(1.0f, 0.0f, 0.8f); 
+            glColor3f(1.0f, 0.0f, 0.8f);
             drawLineDDA(240, 290, 260, 290);
             drawLineDDA(260, 290, 260, 310);
             drawLineDDA(260, 310, 240, 310);
