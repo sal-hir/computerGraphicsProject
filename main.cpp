@@ -161,7 +161,7 @@ void drawPlayer(int level) {
 
         glNewList(pLists[l], GL_COMPILE);
         // Draw border inside list so it's cached
-        glColor3f(1.0f, 1.0f, 1.0f); 
+        glColor3f(1.0f, 1.0f, 1.0f);
         drawLineDDA(240, 290, 260, 290);
         drawLineDDA(260, 290, 260, 310);
         drawLineDDA(260, 310, 240, 310);
@@ -180,144 +180,12 @@ void drawPlayer(int level) {
             fill[0] = 1.0f; fill[1] = 0.5f; fill[2] = 0.0f; // Orange fill
         }
 
-<<<<<<< Updated upstream
-        glPushMatrix();
-        glTranslatef(pX, pY, 0);
-        glTranslatef(-250, -300, 0); // Translate back from physical to logical origin
-        glCallList(pList1);
-        glPopMatrix();
-    }
-
-
-      if(level == 2){
-        static GLuint pList2 = 0;
-        if (pList2 == 0) {
-            pList2 = glGenLists(1);
-
-            glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, 500, 0, 600);
-            glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-
-            // Draw border to physical frame buffer so glReadPixels can find it
-            glColor3f(0.4f, 0.7f, 1.0f); // Light blue border
-            drawLineDDA(240, 290, 260, 290);
-            drawLineDDA(260, 290, 260, 310);
-            drawLineDDA(260, 310, 240, 310);
-            drawLineDDA(240, 310, 240, 290);
-            glFlush();
-
-            glNewList(pList2, GL_COMPILE);
-            // Draw border inside list so it's cached
-            glColor3f(0.4f, 0.7f, 1.0f); 
-            drawLineDDA(240, 290, 260, 290);
-            drawLineDDA(260, 290, 260, 310);
-            drawLineDDA(260, 310, 240, 310);
-            drawLineDDA(240, 310, 240, 290);
-
-            float border[3] = {0.4f, 0.7f, 1.0f};
-            float fill[3] = {1.0f, 1.0f, 0.0f}; // Yellow fill
-            boundaryFill4(250, 300, border, fill);
-            glEndList();
-
-            glMatrixMode(GL_PROJECTION); glPopMatrix();
-            glMatrixMode(GL_MODELVIEW); glPopMatrix();
-        }
-
-    glColor3f(0.4, 0.7, 1);  //Sets player color
-    glPushMatrix();        //Save current coordinate system
-    glTranslatef(pX, pY, 0);       //square drawn (0,-200) positions the player
-    drawLineDDA(-10, -10, 10, -10);  //bottom
-    drawLineDDA(10, -10, 10, 10); //right
-    drawLineDDA(10, 10, -10, 10); //top
-    drawLineDDA(-10, 10, -10, -10);//left
-    glPopMatrix(); //Restore original coordinate system
-
-    }
-
-      if(level == 3){
-        static GLuint pList3 = 0;
-        if (pList3 == 0) {
-            pList3 = glGenLists(1);
-
-            glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, 500, 0, 600);
-            glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-
-            // Draw border to physical frame buffer so glReadPixels can find it
-            glColor3f(1.0f, 0.0f, 0.8f); // Pinkish border
-            drawLineDDA(240, 290, 260, 290);
-            drawLineDDA(260, 290, 260, 310);
-            drawLineDDA(260, 310, 240, 310);
-            drawLineDDA(240, 310, 240, 290);
-            glFlush();
-
-            glNewList(pList3, GL_COMPILE);
-            // Draw border inside list so it's cached
-            glColor3f(1.0f, 0.0f, 0.8f); 
-            drawLineDDA(240, 290, 260, 290);
-            drawLineDDA(260, 290, 260, 310);
-            drawLineDDA(260, 310, 240, 310);
-            drawLineDDA(240, 310, 240, 290);
-
-            float border[3] = {1.0f, 0.0f, 0.8f};
-            float fill[3] = {0.0f, 1.0f, 1.0f}; // Cyan fill
-            boundaryFill4(250, 300, border, fill);
-            glEndList();
-
-            glMatrixMode(GL_PROJECTION); glPopMatrix();
-            glMatrixMode(GL_MODELVIEW); glPopMatrix();
-        }
-
-        glPushMatrix();
-        glTranslatef(pX, pY, 0);
-        glTranslatef(-250, -300, 0); // Translate back from physical to logical origin
-        glCallList(pList3);
-        glPopMatrix();
-    }
-
-      if(level == 4){
-        static GLuint pList4 = 0;
-        if (pList4 == 0) {
-            pList4 = glGenLists(1);
-
-            glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); gluOrtho2D(0, 500, 0, 600);
-            glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
-
-            // Draw border to physical frame buffer so glReadPixels can find it
-            glColor3f(0.3f, 0.7f, 0.0f); // Green border
-            drawLineDDA(240, 290, 260, 290);
-            drawLineDDA(260, 290, 260, 310);
-            drawLineDDA(260, 310, 240, 310);
-            drawLineDDA(240, 310, 240, 290);
-            glFlush();
-
-            glNewList(pList4, GL_COMPILE);
-            // Draw border inside list so it's cached
-            glColor3f(0.3f, 0.7f, 0.0f);
-            drawLineDDA(240, 290, 260, 290);
-            drawLineDDA(260, 290, 260, 310);
-            drawLineDDA(260, 310, 240, 310);
-            drawLineDDA(240, 310, 240, 290);
-
-            float border[3] = {0.3f, 0.7f, 0.0f};
-            float fill[3] = {1.0f, 0.5f, 0.0f}; // Orange fill
-            boundaryFill4(250, 300, border, fill);
-            glEndList();
-
-            glMatrixMode(GL_PROJECTION); glPopMatrix();
-            glMatrixMode(GL_MODELVIEW); glPopMatrix();
-        }
-
-        glPushMatrix();
-        glTranslatef(pX, pY, 0);
-        glTranslatef(-250, -300, 0); // Translate back from physical to logical origin
-        glCallList(pList4);
-        glPopMatrix();
-=======
         boundaryFill4(250, 300, border, fill);
         glEndList();
 
         glMatrixMode(GL_PROJECTION); glPopMatrix();
         glMatrixMode(GL_MODELVIEW); glPopMatrix();
->>>>>>> Stashed changes
+
     }
 
     glPushMatrix();
